@@ -1,0 +1,2 @@
+# FragmentStack
+轻量，低侵入，优化了过渡绘制，模拟Activity四种启动模式的单Activity多Fragment管理
