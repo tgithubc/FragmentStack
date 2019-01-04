@@ -440,13 +440,15 @@ public class FragmentStack {
         } else if (parameter.isPopCurrent) {
             transaction.remove(preFragment);
             mStack.remove(mStack.getLast());
-        } else if (parameter.isHideBottomLayer) {
-            // 有入场动画不隐藏前一个fragment
-            if (parameter.enterAnimation == 0) {
+        } else {
+            // isHideBottomLayer && 没入场动画 才能隐藏下层
+            if (parameter.isHideBottomLayer && parameter.enterAnimation == 0) {
                 transaction.hide(preFragment);
             }
+            // 只要前面不pop掉pre就得触发其onPause
             preFragment.onPause();
         }
+
         // 把存在的实例都干掉,如果有的话
         ListIterator<Pair<String, Fragment>> it = mStack.listIterator();
         while (it.hasNext()) {
@@ -500,13 +502,15 @@ public class FragmentStack {
         } else if (parameter.isPopCurrent) {
             transaction.remove(preFragment);
             mStack.remove(mStack.getLast());
-        } else if (parameter.isHideBottomLayer) {
-            // 有入场动画不隐藏前一个fragment
-            if (parameter.enterAnimation == 0) {
+        } else {
+            // isHideBottomLayer && 没入场动画 才能隐藏下层
+            if (parameter.isHideBottomLayer && parameter.enterAnimation == 0) {
                 transaction.hide(preFragment);
             }
+            // 只要前面不pop掉pre就得触发其onPause
             preFragment.onPause();
         }
+
         transaction.commitAllowingStateLoss();
         mStack.add(new Pair<>(tag, fragment));
     }
