@@ -1,5 +1,6 @@
 package com.tgithubc.lib;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -28,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 /**
  * Created by tc :)
  */
-public class FragmentStack {
+public class FragmentStack implements IFragmentStack{
 
     private static final String TAG = "FragmentStack";
     private static final String SEPARATOR = "###";
@@ -51,6 +52,7 @@ public class FragmentStack {
         return SingletonHolder.INSTANCE;
     }
 
+    @Override
     public void bind(int containerId, FragmentActivity activity) {
         mContainerId = containerId;
         mActivity = activity;
@@ -73,6 +75,7 @@ public class FragmentStack {
                 .build();
     }
 
+    @Override
     public void unBind() {
         mStack.clear();
         mFragmentManager = null;
@@ -80,47 +83,12 @@ public class FragmentStack {
         mActivity = null;
     }
 
-    /**
-     * 什么参数都不用管的标准形式添加一个底部控制栏之上的fragment
-     *
-     * @param fragment
-     */
-    public void showSubFragment(Fragment fragment) {
-        showSubFragment(fragment, mDefaultParameter);
+    @Override
+    public void showFragment(Fragment fragment) {
+        showFragment(fragment, mDefaultParameter);
     }
 
-    /**
-     * 什么参数都不用管的标准形式添加一个全屏Fragment
-     *
-     * @param fragment
-     */
-    public void showFullFragment(Fragment fragment) {
-        showFullFragment(fragment, mDefaultParameter);
-    }
-
-    /**
-     * 需要个性化带点参数什么的添加一个底部控制栏之上的fragment
-     *
-     * @param fragment
-     * @param parameter
-     */
-    public void showSubFragment(Fragment fragment, StartParameter parameter) {
-        showFragment(fragment, FragmentType.TYPE_SUB, parameter);
-    }
-
-    /**
-     * 需要个性化带点参数什么的添加一个全屏Fragment
-     *
-     * @param fragment
-     * @param parameter
-     */
-    public void showFullFragment(Fragment fragment, StartParameter parameter) {
-        showFragment(fragment, FragmentType.TYPE_FULL, parameter);
-    }
-
-    /**
-     * 跳转回主页面
-     */
+    @Override
     public void navigateToHome() {
         if (mStack.isEmpty()) {
             return;
@@ -137,13 +105,8 @@ public class FragmentStack {
         }
     }
 
-    /**
-     * 跳转到某目标fragment，关闭其上所有
-     *
-     * @param tag           指定到tag
-     * @param includeTarget 是否包含关闭目标fragment
-     *                      true同时关闭目标fragment，false保留目标fragment
-     */
+
+    @Override
     public void navigateToFragment(String tag, boolean includeTarget) {
         if (TextUtils.isEmpty(tag) || mStack.isEmpty()) {
             return;
@@ -195,9 +158,7 @@ public class FragmentStack {
         }
     }
 
-    /**
-     * 正常按次序pop出去一个栈顶fragment
-     */
+    @Override
     public boolean pop() {
         if (!mStack.isEmpty()) {
             FragmentTransaction transaction = mFragmentManager.beginTransaction();
@@ -212,8 +173,9 @@ public class FragmentStack {
                 Fragment showFragment = mStack.get(mStack.size() - 2).second;
                 Log.d(TAG, "close Fragment 【"
                         + getTopFragment().getClass().getName()
-                        + "】，and show pre Fragment:"
-                        + showFragment.getClass().getName());
+                        + "】，and show pre Fragment 【:"
+                        + showFragment.getClass().getName()
+                        +"】");
                 transaction.show(showFragment)
                         .remove(getTopFragment())
                         .commitAllowingStateLoss();
@@ -231,9 +193,7 @@ public class FragmentStack {
         }
     }
 
-    /**
-     * 获取top fragment
-     */
+    @Override
     public Fragment getTopFragment() {
         if (mStack != null && !mStack.isEmpty()) {
             return mStack.getLast().second;
@@ -242,9 +202,7 @@ public class FragmentStack {
         }
     }
 
-    /**
-     * 获取前一个fragment
-     */
+    @Override
     public Fragment getPreFragment() {
         if (mStack == null || mStack.isEmpty() || mStack.size() == 1) {
             // viewpager
@@ -254,20 +212,11 @@ public class FragmentStack {
         }
     }
 
-    /**
-     * 是否是在主页
-     *
-     * @return
-     */
     public boolean isMainLayerShow() {
         return mStack.size() == 0;
     }
 
-    /**
-     * 精准查找你指定的tag的fragment
-     *
-     * @param tag
-     */
+    @Override
     public Fragment findFragmentByTag(String tag) {
         for (int i = 0, size = mStack.size(); i < size; i++) {
             Pair<String, Fragment> pair = mStack.get(i);
@@ -278,9 +227,7 @@ public class FragmentStack {
         return null;
     }
 
-    /**
-     * 根据Fragment的Class来判断在栈中已经存在多少实例
-     */
+    @Override
     public int getFragmentCountByClazz(Class clazz) {
         int count = 0;
         for (int i = 0, size = mStack.size(); i < size; i++) {
@@ -292,18 +239,11 @@ public class FragmentStack {
         return count;
     }
 
-    /**
-     * 最终show
-     *
-     * @param fragment  目标Fragment
-     * @param type      FragmentType
-     * @param parameter 跳转参数
-     */
-    private void showFragment(Fragment fragment, @FragmentType int type, StartParameter parameter) {
+    @Override
+    public void showFragment(Fragment fragment, StartParameter parameter) {
         if (!(fragment instanceof IFragmentType)) {
             throw new RuntimeException("fragment" + fragment + "should be implements IFragmentType");
         }
-        ((IFragmentType) fragment).setFragmentType(type);
         if (parameter == null) {
             parameter = mDefaultParameter;
         }
@@ -326,7 +266,7 @@ public class FragmentStack {
         Log.d(TAG, "show Fragment 【"
                 + fragment.getClass().getName()
                 + "】,FragmentType :"
-                + type
+                + ((IFragmentType) fragment).getFragmentType()
                 + ",StartParameter :"
                 + parameter);
     }
@@ -597,6 +537,7 @@ public class FragmentStack {
      * Debug 方法：
      * 获取子fragment栈队列
      */
+    @SuppressLint("RestrictedApi")
     private List<DebugFragmentStack> getChildFragmentRecords(Fragment parentFragment) {
         List<DebugFragmentStack> fragmentRecords = new ArrayList<>();
         List<Fragment> fragmentList = parentFragment.getChildFragmentManager().getFragments();

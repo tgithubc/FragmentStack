@@ -23,13 +23,12 @@ public interface OnFragmentStackChangeListener {
     void onPopFragment(Fragment top);
 
     /**
-     * 移除到底了，露出viewpager了
+     * 移除到底了
      */
     void onShowMainLayer();
 
     /**
-     * 添加首个，隐藏viewpager
-     * 有动画入场的时候不能隐藏
+     * 添加首个
      */
     void onHideMainLayer(boolean isHide);
 }
