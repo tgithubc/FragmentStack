@@ -1,8 +1,17 @@
 # FragmentStack
 轻量，低侵入，优化了过渡绘制，模拟Activity四种启动模式的单Activity多Fragment管理
 # 使用
-step1:    
+step1:  
+ 
 ```groovy
+add maven { url "https://jitpack.io" } to
+
+allprojects {
+    repositories {
+    }
+}   
+
+add 
 compile 'com.tgithubc:fragment_stack:1.0'
 ```
     
@@ -21,6 +30,9 @@ FragmentStack.getInstance().bind(int containerId, FragmentActivity activity);
 ```java
 FragmentStack.getInstance().showFragment(Fragment fragment);
 FragmentStack.getInstance().showFragment(Fragment fragment, StartParameter parameter);
+
+其他方法参见IFragmentStack接口
+
 ```  
 自定义配置:
 ```java
