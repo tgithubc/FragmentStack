@@ -18,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -265,9 +264,7 @@ public class FragmentStack implements IFragmentStack{
         }
         Log.d(TAG, "show Fragment 【"
                 + fragment.getClass().getName()
-                + "】,FragmentType :"
-                + ((IFragmentType) fragment).getFragmentType()
-                + ",StartParameter :"
+                + "】,StartParameter :"
                 + parameter);
     }
 
