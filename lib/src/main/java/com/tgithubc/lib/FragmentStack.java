@@ -240,7 +240,7 @@ public class FragmentStack implements IFragmentStack{
 
     @Override
     public void showFragment(Fragment fragment, StartParameter parameter) {
-        if (!(fragment instanceof IFragmentType)) {
+        if (!(fragment instanceof INewIntent)) {
             throw new RuntimeException("fragment" + fragment + "should be implements IFragmentType");
         }
         if (parameter == null) {
@@ -302,7 +302,7 @@ public class FragmentStack implements IFragmentStack{
         } else {
             // 触发onNewIntent，自己带着刷新参数过去
             Fragment target = mStack.getLast().second;
-            ((IFragmentType) target).onNewIntent(parameter.bundle);
+            ((INewIntent) target).onNewIntent(parameter.bundle);
         }
     }
 
@@ -337,7 +337,7 @@ public class FragmentStack implements IFragmentStack{
             }
             transaction.show(target).commitAllowingStateLoss();
             executeTransactionNow();
-            ((IFragmentType) target).onNewIntent(parameter.bundle);
+            ((INewIntent) target).onNewIntent(parameter.bundle);
             safeShowFragmentView(target);
             target.onResume();
             return;

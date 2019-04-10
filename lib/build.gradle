@@ -36,7 +36,7 @@ publish {
     userOrg = 'tc'
     groupId = 'com.tgithubc'
     artifactId = 'fragment_stack'
-    publishVersion = '1.0'
+    publishVersion = '1.1'
     desc = 'fragment_stack'
     website = 'https://github.com/tgithubc/FragmentStack.git'
 }
