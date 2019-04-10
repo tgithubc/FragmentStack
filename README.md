@@ -17,7 +17,7 @@ compile 'com.tgithubc:fragment_stack:1.0'
     
 step2:    
 
-你的BaseFragment继承IFragmentType，实现onNewIntent(Bundle bundle);
+你的BaseFragment实现INewIntent，实现onNewIntent(Bundle bundle);
     
 
 step3:  
